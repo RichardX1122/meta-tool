@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文献检索小工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36BFFA',
+                        accent: '#0FC6C2',
+                        neutral: '#64748B',
+                        light: '#F1F5F9',
+                        dark: '#1E293B'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+
+<body class="font-inter bg-gray-50 text-dark">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-book text-primary text-2xl"></i>
+                <h1 class="text-xl md:text-2xl font-bold text-primary">文献检索小工具</h1>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="#strategy" class="nav-link text-neutral hover:text-primary transition-custom">检索策略</a>
+                <a href="#search" class="nav-link text-neutral hover:text-primary transition-custom">文献检索</a>
+                <a href="#download" class="nav-link text-neutral hover:text-primary transition-custom">全文下载</a>
+                <a href="#organize" class="nav-link text-neutral hover:text-primary transition-custom">结果整理</a>
+                <a href="#extract" class="nav-link text-neutral hover:text-primary transition-custom">文献提取</a>
+            </nav>
+            
+            <button class="md:hidden text-neutral text-xl" id="mobile-menu-button">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white w-full border-t" id="mobile-menu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#strategy" class="py-2 text-neutral hover:text-primary transition-custom">检索策略</a>
+                <a href="#search" class="py-2 text-neutral hover:text-primary transition-custom">文献检索</a>
+                <a href="#download" class="py-2 text-neutral hover:text-primary transition-custom">全文下载</a>
+                <a href="#organize" class="py-2 text-neutral hover:text-primary transition-custom">结果整理</a>
+                <a href="#extract" class="py-2 text-neutral hover:text-primary transition-custom">文献提取</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主横幅 -->
+    <section class="bg-gradient-to-r from-primary to-secondary text-white py-12 md:py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-4xl font-bold mb-4">高效文献管理与分析工具</h2>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto opacity-90">
+                自动化检索策略生成、多数据库检索、全文下载与结果整理，助力您的学术研究
+            </p>
+            <div class="mt-8">
+                <a href="#strategy" class="bg-white text-primary font-medium px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-custom inline-flex items-center">
+                    <i class="fa fa-rocket mr-2"></i> 开始使用
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-4 py-10">
+        <!-- 功能概览卡片 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-center mb-10">核心功能</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <!-- 功能卡片 1 -->
+                <div class="bg-white rounded-xl p-6 card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-sitemap text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">检索策略生成</h3>
+                    <p class="text-neutral text-sm">自动生成科学合理的文献检索策略，提高检索准确性</p>
+                </div>
+                
+                <!-- 功能卡片 2 -->
+                <div class="bg-white rounded-xl p-6 card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-search text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">多库检索</h3>
+                    <p class="text-neutral text-sm">支持多个主流文献数据库检索，一站式获取文献</p>
+                </div>
+                
+                <!-- 功能卡片 3 -->
+                <div class="bg-white rounded-xl p-6 card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-download text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">全文下载</h3>
+                    <p class="text-neutral text-sm">自动下载文献全文，高效管理下载状态</p>
+                </div>
+                
+                <!-- 功能卡片 4 -->
+                <div class="bg-white rounded-xl p-6 card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-sort-amount-asc text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">结果整理</h3>
+                    <p class="text-neutral text-sm">自动去重、合并文献，生成标准化编码与排序</p>
+                </div>
+                
+                <!-- 功能卡片 5 -->
+                <div class="bg-white rounded-xl p-6 card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+                    <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-table text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">文献提取</h3>
+                    <p class="text-neutral text-sm">自定义提取字段，生成规范化的文献信息提取表</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. 检索策略生成模块 -->
+        <section id="strategy" class="mb-20 scroll-mt-20">
+            <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4">
+                        <i class="fa fa-sitemap text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">检索策略生成</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 左侧：输入区 -->
+                    <div class="lg:col-span-2">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">研究主题</label>
+                                <input type="text" id="research_topic" 
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom"
+                                    placeholder="例如：小细胞肺癌晚期一线治疗方案（必须包含免疫治疗药物）">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">核心关键词（每行一个）</label>
+                                <textarea id="keywords" rows="5" 
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom"
+                                    placeholder="小细胞肺癌
+晚期
+一线治疗
+免疫治疗
+免疫检查点抑制剂"></textarea>
+                                <button id="suggest_keywords" 
+                                    class="mt-2 text-sm text-primary hover:text-primary/80 transition-custom inline-flex items-center">
+                                    <i class="fa fa-lightbulb-o mr-1"></i> 智能推荐关键词
+                                </button>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">特定药物（可选，每行一个）</label>
+                                <textarea id="specific_drugs" rows="3" 
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom"
+                                    placeholder="纳武利尤单抗
+帕博利珠单抗
+阿替利珠单抗
+度伐利尤单抗"></textarea>
+                                <p class="mt-1 text-xs text-neutral/70">输入具体药物名称可提高检索精准度</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">同义词/相关术语（可选，每行一个）</label>
+                                <textarea id="synonyms" rows="3" 
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom"
+                                    placeholder="SCLC
+免疫疗法
+PD-1抑制剂
+PD-L1抑制剂"></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral mb-2">检索年限范围</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" id="start_year" placeholder="起始年" value="2018"
+                                            class="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom">
+                                        <span class="text-neutral">-</span>
+                                        <input type="number" id="end_year" placeholder="结束年" value="2023"
+                                            class="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral mb-2">文献类型</label>
+                                    <select id="document_type" 
+                                        class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                        <option value="">全部类型</option>
+                                        <option value="article">期刊论文</option>
+                                        <option value="review">综述</option>
+                                        <option value="randomized controlled trial" selected>随机对照试验</option>
+                                        <option value="clinical trial">临床试验</option>
+                                        <option value="meta-analysis">Meta分析</option>
+                                        <option value="conference">会议论文</option>
+                                        <option value="thesis">学位论文</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-2">
+                                <button id="generate_strategy" 
+                                    class="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-custom inline-flex items-center">
+                                    <i class="fa fa-magic mr-2"></i> 生成检索策略
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧：结果区 -->
+                    <div>
+                        <div class="bg-light rounded-xl p-5 h-full flex flex-col">
+                            <h3 class="font-semibold text-lg mb-4">生成的检索策略</h3>
+                            
+                            <div id="strategy_result" class="flex-1 overflow-auto mb-4 text-sm space-y-3">
+                                <div class="text-neutral italic text-center py-8">
+                                    点击"生成检索策略"按钮获取结果
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-3">
+                                <button id="copy_strategy" disabled
+                                    class="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center justify-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-copy mr-2"></i> 复制
+                                </button>
+                                <button id="use_strategy" disabled
+                                    class="flex-1 bg-secondary hover:bg-secondary/90 text-white font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center justify-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-arrow-right mr-2"></i> 用于检索
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 文献库检索模块 -->
+        <section id="search" class="mb-20 scroll-mt-20">
+            <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4">
+                        <i class="fa fa-search text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">文献库检索</h2>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- 检索式输入 -->
+                    <div>
+                        <label class="block text-sm font-medium text-neutral mb-2">检索式</label>
+                        <div class="flex">
+                            <input type="text" id="search_query" 
+                                class="flex-1 px-4 py-3 border border-gray-200 rounded-l-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom"
+                                placeholder="输入检索式，例如：(小细胞肺癌 OR SCLC) AND (免疫治疗 OR 免疫疗法)">
+                            <button id="clear_query" 
+                                class="bg-gray-100 hover:bg-gray-200 text-neutral px-4 border border-gray-200 border-l-0 transition-custom">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 文献库选择 -->
+                    <div>
+                        <label class="block text-sm font-medium text-neutral mb-2">选择文献数据库（可多选）</label>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="pubmed" checked class="mr-2">
+                                <span>PubMed</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="webofscience" checked class="mr-2">
+                                <span>Web of Science</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="scopus" class="mr-2">
+                                <span>Scopus</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="cnki" checked class="mr-2">
+                                <span>知网</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="wanfang" class="mr-2">
+                                <span>万方</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="vip" class="mr-2">
+                                <span>维普</span>
+                            </label>
+                            <!-- 新增肿瘤学专业数据库 -->
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="asco" class="mr-2">
+                                <span>ASCO</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="esmo" class="mr-2">
+                                <span>ESMO</span>
+                            </label>
+                            <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-light transition-custom">
+                                <input type="checkbox" name="database" value="cancernet" class="mr-2">
+                                <span>CancerNet</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- 检索选项 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-neutral mb-2">排序方式</label>
+                            <select id="sort_by" 
+                                class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                <option value="relevance">相关度</option>
+                                <option value="date" selected>发表日期（最新）</option>
+                                <option value="citations">被引频次</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-neutral mb-2">每页结果数</label>
+                            <select id="results_per_page" 
+                                class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                <option value="20">20</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-neutral mb-2">检索范围</label>
+                            <select id="search_scope" 
+                                class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                <option value="title">标题</option>
+                                <option value="abstract" selected>摘要</option>
+                                <option value="title_abstract">标题+摘要</option>
+                                <option value="all">全文</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 高级过滤选项 -->
+                    <div class="bg-light rounded-xl p-5">
+                        <h3 class="font-semibold text-lg mb-4">高级过滤</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">研究类型</label>
+                                <select id="study_type" 
+                                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                    <option value="">全部类型</option>
+                                    <option value="randomized controlled trial">随机对照试验</option>
+                                    <option value="systematic review">系统评价</option>
+                                    <option value="meta-analysis">Meta分析</option>
+                                    <option value="clinical trial">临床试验</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">影响因子范围</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="number" id="if_min" placeholder="最低" 
+                                        class="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom">
+                                    <span class="text-neutral">-</span>
+                                    <input type="number" id="if_max" placeholder="最高" 
+                                        class="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">样本量</label>
+                                <select id="sample_size" 
+                                    class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                    <option value="">不限</option>
+                                    <option value="small">小样本 (<50)</option>
+                                    <option value="medium">中样本 (50-199)</option>
+                                    <option value="large">大样本 (≥200)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 检索按钮 -->
+                    <div class="flex justify-between items-center">
+                        <button id="run_search" 
+                            class="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-custom inline-flex items-center">
+                            <i class="fa fa-search mr-2"></i> 执行检索
+                        </button>
+                        
+                        <div class="text-sm text-neutral">
+                            <span id="search_status">准备就绪</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 检索结果 -->
+                <div class="mt-8 pt-6 border-t border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-semibold text-lg">检索结果</h3>
+                        <div class="flex space-x-3">
+                            <button id="export_results" disabled
+                                class="bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                <i class="fa fa-download mr-2"></i> 导出结果
+                            </button>
+                            <button id="add_to_collection" disabled
+                                class="bg-secondary hover:bg-secondary/90 text-white font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                <i class="fa fa-plus mr-2"></i> 加入收藏
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 结果统计 -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-light rounded-lg p-4">
+                            <div class="text-sm text-neutral">总文献数</div>
+                            <div class="text-2xl font-bold text-primary" id="total_results">0</div>
+                        </div>
+                        <div class="bg-light rounded-lg p-4">
+                            <div class="text-sm text-neutral">已选择文献库</div>
+                            <div class="text-2xl font-bold text-primary" id="selected_databases">0</div>
+                        </div>
+                        <div class="bg-light rounded-lg p-4">
+                            <div class="text-sm text-neutral">RCT研究数</div>
+                            <div class="text-2xl font-bold text-primary" id="rct_count">0</div>
+                        </div>
+                        <div class="bg-light rounded-lg p-4">
+                            <div class="text-sm text-neutral">检索时间</div>
+                            <div class="text-2xl font-bold text-primary" id="search_time">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 结果过滤标签 -->
+                    <div id="filter_tags" class="flex flex-wrap gap-2 mb-6 hidden">
+                        <span class="inline-flex items-center bg-primary/10 text-primary text-xs px-3 py-1 rounded-full">
+                            免疫治疗 <button class="ml-1"><i class="fa fa-times-circle"></i></button>
+                        </span>
+                        <span class="inline-flex items-center bg-primary/10 text-primary text-xs px-3 py-1 rounded-full">
+                            2018-2023 <button class="ml-1"><i class="fa fa-times-circle"></i></button>
+                        </span>
+                        <span class="inline-flex items-center bg-primary/10 text-primary text-xs px-3 py-1 rounded-full">
+                            随机对照试验 <button class="ml-1"><i class="fa fa-times-circle"></i></button>
+                        </span>
+                        <button class="text-xs text-neutral hover:text-primary">
+                            清除全部
+                        </button>
+                    </div>
+                    
+                    <!-- 结果列表 -->
+                    <div id="search_results" class="border border-gray-200 rounded-xl overflow-hidden">
+                        <div class="p-8 text-center text-neutral">
+                            <i class="fa fa-file-text-o text-4xl mb-4 opacity-30"></i>
+                            <p>尚未执行检索，点击"执行检索"按钮获取结果</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 分页 -->
+                    <div id="pagination" class="mt-6 flex justify-center items-center space-x-2 hidden">
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-neutral hover:bg-light transition-custom">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary text-white">1</button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-neutral hover:bg-light transition-custom">2</button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-neutral hover:bg-light transition-custom">3</button>
+                        <span class="text-neutral">...</span>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-neutral hover:bg-light transition-custom">5</button>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-neutral hover:bg-light transition-custom">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 全文下载模块 -->
+        <section id="download" class="mb-20 scroll-mt-20">
+            <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4">
+                        <i class="fa fa-download text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">全文下载</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 左侧：下载队列 -->
+                    <div class="lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-lg">下载队列</h3>
+                            <div class="flex space-x-3">
+                                <button id="add_downloads" 
+                                    class="bg-secondary hover:bg-secondary/90 text-white font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center">
+                                    <i class="fa fa-plus mr-2"></i> 添加文献
+                                </button>
+                                <button id="start_all_downloads" 
+                                    class="bg-primary hover:bg-primary/90 text-white font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center">
+                                    <i class="fa fa-play mr-2"></i> 全部开始
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 下载列表 -->
+                        <div class="border border-gray-200 rounded-xl overflow-hidden">
+                            <div class="hidden md:grid grid-cols-12 bg-light p-3 text-sm font-medium border-b border-gray-200">
+                                <div class="col-span-5">文献标题</div>
+                                <div class="col-span-2">来源</div>
+                                <div class="col-span-2">年份</div>
+                                <div class="col-span-2">状态</div>
+                                <div class="col-span-1 text-center">操作</div>
+                            </div>
+                            
+                            <div id="download_queue">
+                                <!-- 空状态 -->
+                                <div class="p-8 text-center text-neutral">
+                                    <i class="fa fa-file-pdf-o text-4xl mb-4 opacity-30"></i>
+                                    <p>下载队列为空，点击"添加文献"按钮添加需要下载的文献</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧：下载设置和状态 -->
+                    <div>
+                        <div class="bg-light rounded-xl p-5 mb-6">
+                            <h3 class="font-semibold text-lg mb-4">下载设置</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral mb-2">下载位置</label>
+                                    <div class="flex">
+                                        <input type="text" id="download_path" value="文献下载/小细胞肺癌免疫治疗/"
+                                            class="flex-1 px-4 py-2 border border-gray-200 rounded-l-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom text-sm">
+                                        <button id="browse_path" 
+                                            class="bg-white border border-gray-200 border-l-0 px-4 py-2 rounded-r-lg hover:bg-gray-50 transition-custom text-sm">
+                                            浏览
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral mb-2">同时下载数量</label>
+                                    <select id="download_threads" 
+                                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white text-sm">
+                                        <option value="1">1个（推荐）</option>
+                                        <option value="2">2个</option>
+                                        <option value="3">3个</option>
+                                        <option value="5">5个（可能不稳定）</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="auto_rename" checked 
+                                            class="mr-2">
+                                        <span class="text-sm">自动重命名文件（作者+年份+标题）</span>
+                                    </label>
+                                </div>
+                                
+                                <div>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="overwrite_existing">
+                                        <span class="text-sm">覆盖已存在的文件</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-light rounded-xl p-5">
+                            <h3 class="font-semibold text-lg mb-4">下载状态</h3>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>总体进度</span>
+                                        <span id="overall_progress_text">0%</span>
+                                    </div>
+                                    <div class="w-full bg-white rounded-full h-2.5">
+                                        <div id="overall_progress_bar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-3 text-sm">
+                                    <div class="bg-white rounded-lg p-3">
+                                        <div class="text-neutral">总任务数</div>
+                                        <div class="font-semibold" id="total_tasks">0</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3">
+                                        <div class="text-neutral">已完成</div>
+                                        <div class="font-semibold text-green-500" id="completed_tasks">0</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3">
+                                        <div class="text-neutral">下载中</div>
+                                        <div class="font-semibold text-blue-500" id="downloading_tasks">0</div>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3">
+                                        <div class="text-neutral">失败</div>
+                                        <div class="font-semibold text-red-500" id="failed_tasks">0</div>
+                                    </div>
+                                </div>
+                                
+                                <button id="cancel_all_downloads" disabled
+                                    class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center justify-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-stop mr-2"></i> 取消全部
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 结果整理模块 -->
+        <section id="organize" class="mb-20 scroll-mt-20">
+            <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4">
+                        <i class="fa fa-sort-amount-asc text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">结果整理</h2>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- 导入文献 -->
+                    <div>
+                        <h3 class="font-semibold text-lg mb-4">导入文献</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-primary transition-custom cursor-pointer" id="upload_files_area">
+                                <i class="fa fa-upload text-3xl text-neutral mb-3"></i>
+                                <p class="text-sm">上传文献文件（支持RIS、EndNote、BibTeX格式）</p>
+                                <input type="file" id="file_upload" class="hidden" multiple accept=".ris,.enw,.bib,.txt">
+                            </div>
+                            
+                            <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-primary transition-custom cursor-pointer">
+                                <i class="fa fa-database text-3xl text-neutral mb-3"></i>
+                                <p class="text-sm">从检索结果导入</p>
+                                <p class="text-xs text-neutral/70 mt-1">导入之前的检索结果</p>
+                            </div>
+                            
+                            <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-primary transition-custom cursor-pointer">
+                                <i class="fa fa-folder-open text-3xl text-neutral mb-3"></i>
+                                <p class="text-sm">从本地文件夹导入</p>
+                                <p class="text-xs text-neutral/70 mt-1">导入已下载的文献全文</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex justify-center">
+                            <span id="import_status" class="text-sm text-neutral">未导入任何文献</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 处理选项 -->
+                    <div class="bg-light rounded-xl p-5">
+                        <h3 class="font-semibold text-lg mb-4">处理选项</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium mb-3">去重设置</h4>
+                                
+                                <div class="space-y-3">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" id="deduplicate" checked 
+                                            class="mr-2">
+                                        <span>自动去重</span>
+                                    </label>
+                                    
+                                    <div class="pl-4 space-y-2">
+                                        <label class="flex items-center">
+                                            <input type="radio" name="duplicate_criteria" value="strict" checked 
+                                                class="mr-2">
+                                            <span>严格模式（标题+作者完全匹配）</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="radio" name="duplicate_criteria" value="fuzzy" 
+                                                class="mr-2">
+                                            <span>模糊模式（标题相似度>80%）</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-medium mb-3">编码与排序</h4>
+                                
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm mb-1">编码规则</label>
+                                        <select id="coding_rule" 
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white text-sm">
+                                            <option value="year-firstauthor">年份+第一作者（如：2023-Wang）</option>
+                                            <option value="author-year">第一作者+年份（如：Wang-2023）</option>
+                                            <option value="serial-number">序号（如：Lit-001）</option>
+                                            <option value="custom">自定义...</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm mb-1">排序方式</label>
+                                        <select id="sorting_rule" 
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white text-sm">
+                                            <option value="year-desc" selected>年份（最新优先）</option>
+                                            <option value="year-asc">年份（最早优先）</option>
+                                            <option value="author-asc">作者（字母顺序）</option>
+                                            <option value="citations-desc">被引频次（降序）</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <button id="process_documents" disabled
+                                class="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                <i class="fa fa-cogs mr-2"></i> 开始处理
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 处理结果 -->
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-lg">处理结果</h3>
+                            <div class="flex space-x-3">
+                                <button id="export_processed" disabled
+                                    class="bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-download mr-2"></i> 导出
+                                </button>
+                                <button id="view_details" disabled
+                                    class="bg-secondary hover:bg-secondary/90 text-white font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-list mr-2"></i> 查看详情
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 统计信息 -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-light rounded-lg p-4">
+                                <div class="text-sm text-neutral">原始文献数</div>
+                                <div class="text-xl font-bold text-primary" id="original_count">0</div>
+                            </div>
+                            <div class="bg-light rounded-lg p-4">
+                                <div class="text-sm text-neutral">去重后文献数</div>
+                                <div class="text-xl font-bold text-primary" id="unique_count">0</div>
+                            </div>
+                            <div class="bg-light rounded-lg p-4">
+                                <div class="text-sm text-neutral">移除重复数</div>
+                                <div class="text-xl font-bold text-red-500" id="duplicate_count">0</div>
+                            </div>
+                            <div class="bg-light rounded-lg p-4">
+                                <div class="text-sm text-neutral">处理时间</div>
+                                <div class="text-xl font-bold text-primary" id="processing_time">-</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 结果预览 -->
+                        <div id="processing_results" class="border border-gray-200 rounded-xl overflow-hidden">
+                            <div class="p-8 text-center text-neutral">
+                                <i class="fa fa-bar-chart text-4xl mb-4 opacity-30"></i>
+                                <p>尚未处理任何文献，导入文献后点击"开始处理"按钮</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 文献提取模块 -->
+        <section id="extract" class="mb-10 scroll-mt-20">
+            <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mr-4">
+                        <i class="fa fa-table text-primary"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold">文献提取表</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 左侧：提取设置 -->
+                    <div>
+                        <h3 class="font-semibold text-lg mb-4">提取设置</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">提取表名称</label>
+                                <input type="text" id="extraction_name" value="小细胞肺癌晚期免疫治疗方案提取表"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">选择文献来源</label>
+                                <select id="source_documents" 
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+                                    <option value="">-- 请选择 --</option>
+                                    <option value="recent-search">最近一次检索结果</option>
+                                    <option value="processed">已处理的文献集合</option>
+                                    <option value="upload">上传文献列表</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-neutral mb-2">提取字段设置</label>
+                                <div class="space-y-2 mb-3">
+                                    <button id="load_template" 
+                                        class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center justify-center text-sm">
+                                        <i class="fa fa-file-text-o mr-2"></i> 加载模板
+                                    </button>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button id="load_oncology_template" 
+                                            class="bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-3 py-1.5 rounded-lg transition-custom inline-flex items-center justify-center text-xs">
+                                            <i class="fa fa-stethoscope mr-1"></i> 肿瘤学模板
+                                        </button>
+                                        <button id="load_immunotherapy_template" 
+                                            class="bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-3 py-1.5 rounded-lg transition-custom inline-flex items-center justify-center text-xs">
+                                            <i class="fa fa-shield mr-1"></i> 免疫治疗模板
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="fields_list" class="border border-gray-200 rounded-lg max-h-64 overflow-y-auto">
+                                    <div class="p-4 text-center text-neutral text-sm">
+                                        选择文献来源后添加提取字段
+                                    </div>
+                                </div>
+                                
+                                <div class="flex mt-3">
+                                    <input type="text" id="new_field_name" placeholder="字段名称"
+                                        class="flex-1 px-3 py-2 border border-gray-200 rounded-l-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom text-sm">
+                                    <select id="new_field_type" 
+                                        class="px-3 py-2 border border-gray-200 border-l-0 border-r-0 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white text-sm">
+                                        <option value="text">文本</option>
+                                        <option value="number">数字</option>
+                                        <option value="date">日期</option>
+                                        <option value="checkbox">复选框</option>
+                                        <option value="dropdown">下拉选择</option>
+                                    </select>
+                                    <button id="add_field" disabled
+                                        class="bg-primary hover:bg-primary/90 text-white font-medium px-3 py-2 rounded-r-lg transition-custom opacity-50 cursor-not-allowed">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button id="generate_extraction" disabled
+                                class="w-full bg-primary hover:bg-primary/90 text-white font-medium px-4 py-3 rounded-lg transition-custom inline-flex items-center justify-center opacity-50 cursor-not-allowed">
+                                <i class="fa fa-table mr-2"></i> 生成提取表
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧：提取表预览 -->
+                    <div class="lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-semibold text-lg">提取表预览</h3>
+                            <div class="flex space-x-3">
+                                <button id="export_extraction" disabled
+                                    class="bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-download mr-2"></i> 导出 (Excel)
+                                </button>
+                                <button id="print_extraction" disabled
+                                    class="bg-white border border-gray-200 hover:bg-gray-50 text-neutral font-medium px-4 py-2 rounded-lg transition-custom inline-flex items-center opacity-50 cursor-not-allowed">
+                                    <i class="fa fa-print mr-2"></i> 打印
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="extraction_preview" class="border border-gray-200 rounded-xl overflow-hidden">
+                            <div class="p-8 text-center text-neutral">
+                                <i class="fa fa-table text-4xl mb-4 opacity-30"></i>
+                                <p>设置提取字段后，点击"生成提取表"按钮查看预览</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa fa-book text-primary text-2xl"></i>
+                        <h3 class="text-xl font-bold">文献检索小工具</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        一款高效的学术文献管理工具，帮助研究人员自动化完成文献检索、下载、整理和数据提取等工作，提高研究效率。
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">功能导航</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#strategy" class="hover:text-primary transition-custom">检索策略生成</a></li>
+                        <li><a href="#search" class="hover:text-primary transition-custom">文献库检索</a></li>
+                        <li><a href="#download" class="hover:text-primary transition-custom">全文下载</a></li>
+                        <li><a href="#organize" class="hover:text-primary transition-custom">结果整理</a></li>
+                        <li><a href="#extract" class="hover:text-primary transition-custom">文献提取表</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">联系与反馈</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li class="flex items-center"><i class="fa fa-envelope-o mr-2 text-primary"></i> support@litsearchtool.com</li>
+                        <li class="flex items-center"><i class="fa fa-github mr-2 text-primary"></i> github.com/litsearchtool</li>
+                        <li class="flex items-center"><i class="fa fa-question-circle-o mr-2 text-primary"></i> 使用帮助</li>
+                        <li class="flex items-center"><i class="fa fa-comment-o mr-2 text-primary"></i> 提交反馈</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-6 text-center text-gray-500 text-sm">
+                © 2023 文献检索小工具 - 学术研究好帮手
+            </div>
+        </div>
+    </footer>
+
+    <!-- 通知提示组件 -->
+    <div id="notification" class="fixed bottom-5 right-5 bg-dark text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-50">
+        <i id="notification_icon" class="fa fa-check-circle mr-2 text-green-400"></i>
+        <span id="notification_text">操作成功</span>
+    </div>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('py-2', 'shadow');
+                    navbar.classList.remove('py-3', 'shadow-sm');
+                } else {
+                    navbar.classList.add('py-3', 'shadow-sm');
+                    navbar.classList.remove('py-2', 'shadow');
+                }
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    // 关闭移动端菜单（如果打开）
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // 1. 检索策略生成功能 - 增强药物检索支持
+            const generateStrategyBtn = document.getElementById('generate_strategy');
+            const strategyResult = document.getElementById('strategy_result');
+            const copyStrategyBtn = document.getElementById('copy_strategy');
+            const useStrategyBtn = document.getElementById('use_strategy');
+            const suggestKeywordsBtn = document.getElementById('suggest_keywords');
+            
+            // 智能推荐关键词
+            suggestKeywordsBtn.addEventListener('click', function() {
+                const topic = document.getElementById('research_topic').value.toLowerCase();
+                
+                let suggestedKeywords = [];
+                
+                // 根据主题内容推荐相关关键词
+                if (topic.includes('肺癌') || topic.includes('肺肿瘤')) {
+                    suggestedKeywords.push('肺癌', '肺肿瘤', '小细胞肺癌', 'SCLC');
+                }
+                
+                if (topic.includes('晚期') || topic.includes('进展期')) {
+                    suggestedKeywords.push('晚期', '进展期', 'IV期', '转移性');
+                }
+                
+                if (topic.includes('治疗') || topic.includes('疗法')) {
+                    suggestedKeywords.push('治疗', '疗法', '一线治疗', '一线方案');
+                }
+                
+                if (topic.includes('免疫') || topic.includes('immune')) {
+                    suggestedKeywords.push('免疫治疗', '免疫疗法', '免疫检查点抑制剂', 
+                                         'PD-1', 'PD-L1', 'CTLA-4');
+                }
+                
+                // 添加药物推荐
+                if (topic.includes('肺癌') && (topic.includes('免疫') || topic.includes('药物'))) {
+                    document.getElementById('specific_drugs').value = `纳武利尤单抗
+帕博利珠单抗
+阿替利珠单抗
+度伐利尤单抗
+卡瑞利珠单抗
+替雷利珠单抗`;
+                }
+                
+                // 将推荐的关键词添加到文本框
+                if (suggestedKeywords.length > 0) {
+                    document.getElementById('keywords').value = suggestedKeywords.join('\n');
+                    showNotification('已推荐相关关键词，请根据需要调整', 'info');
+                }
+            });
+            
+            const generateStrategyBtn = document.getElementById('generate_strategy_btn');
+generateStrategyBtn.addEventListener('click', function() {
+                const topic = document.getElementById('research_topic').value || '未指定研究主题';
+                const keywords = document.getElementById('keywords').value.split('\n').filter(k => k.trim() !== '');
+                const specificDrugs = document.getElementById('specific_drugs').value.split('\n').filter(d => d.trim() !== '');
+                const synonyms = document.getElementById('synonyms').value.split('\n').filter(s => s.trim() !== '');
+                const startYear = document.getElementById('start_year').value;
+                const endYear = document.getElementById('end_year').value;
+                const docType = document.getElementById('document_type').value;
+                
+                if (keywords.length === 0) {
+                    showNotification('请至少输入一个核心关键词', 'error');
+                    return;
+                }
+                
+                // 生成检索策略（优化版本，增加药物检索逻辑）
+                let strategyHtml = `
+                    <div class="font-medium mb-2">研究主题：${topic}</div>
+                    <div class="mb-3">
+                        <div class="font-medium mb-1">检索式：</div>
+                        <div class="bg-white p-3 rounded-lg text-sm font-mono">
+                            (${keywords.join(' OR ')})${synonyms.length > 0 ? ` OR (${synonyms.join(' OR ')})` : ''}
+                            ${specificDrugs.length > 0 ? ` AND (${specificDrugs.join(' OR ')})` : ''}
+                            ${startYear ? ` AND (PY >= ${startYear})` : ''}
+                            ${endYear ? ` AND (PY <= ${endYear})` : ''}
+                            ${docType ? ` AND (PT = ${docType})` : ''}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="font-medium mb-1">检索建议：</div>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li>建议先使用上述检索式进行初步检索</li>
+                            <li>根据初步结果调整关键词和检索策略</li>
+                            <li>可考虑使用主题词与自由词结合的方式提高检索准确性</li>
+                            ${specificDrugs.length > 0 ? `<li>已包含特定免疫治疗药物，可确保检索结果相关性</li>` : ''}
+                        </ul>
+                    </div>
+                `;
+                
+                strategyResult.innerHTML = strategyHtml;
+                
+                // 启用按钮
+                copyStrategyBtn.disabled = false;
+                copyStrategyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                useStrategyBtn.disabled = false;
+                useStrategyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                // 添加导出按钮
+                const exportBtn = document.createElement('button');
+                exportBtn.className = 'ml-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-custom';
+                exportBtn.innerHTML = '<i class="fa fa-download mr-1"></i> 导出';
+                exportBtn.addEventListener('click', function() {
+                    const strategyText = strategyResult.querySelector('.font-mono').textContent;
+                    const blob = new Blob([strategyText], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '检索策略_' + new Date().toISOString().slice(0,10) + '.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showNotification('检索策略已导出', 'success');
+                });
+                
+                // 将导出按钮添加到按钮组
+                const buttonGroup = strategyResult.parentNode.querySelector('.flex');
+                if (buttonGroup) buttonGroup.appendChild(exportBtn);
+                
+                showNotification('检索策略生成成功', 'success');
+            });
+            
+            // 复制检索策略
+            copyStrategyBtn.addEventListener('click', function() {
+                const strategyText = strategyResult.querySelector('.font-mono').textContent;
+                navigator.clipboard.writeText(strategyText).then(function() {
+                    showNotification('检索策略已复制到剪贴板', 'success');
+                }, function() {
+                    showNotification('复制失败，请手动复制', 'error');
+                });
+            });
+            
+            // 使用检索策略（复制到检索框）
+            useStrategyBtn.addEventListener('click', function() {
+                const strategyText = strategyResult.querySelector('.font-mono').textContent;
+                document.getElementById('search_query').value = strategyText;
+                
+                // 滚动到检索区域
+                document.getElementById('search').scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                showNotification('检索式已复制到文献检索区', 'success');
+            });
+            
+            // 2. 文献库检索功能 - 增加肿瘤学数据库和专业过滤
+            const runSearchBtn = document.getElementById('run_search');
+            const searchQuery = document.getElementById('search_query');
+            const clearQueryBtn = document.getElementById('clear_query');
+            const searchStatus = document.getElementById('search_status');
+            const searchResults = document.getElementById('search_results');
+            const totalResults = document.getElementById('total_results');
+            const selectedDatabases = document.getElementById('selected_databases');
+            const rctCount = document.getElementById('rct_count');
+            const searchTime = document.getElementById('search_time');
+            const exportResultsBtn = document.getElementById('export_results');
+            const addToCollectionBtn = document.getElementById('add_to_collection');
+            const pagination = document.getElementById('pagination');
+            const filterTags = document.getElementById('filter_tags');
+            
+            // 清除检索式
+            clearQueryBtn.addEventListener('click', function() {
+                searchQuery.value = '';
+            });
+            
+            // 执行检索
+            runSearchBtn.addEventListener('click', function() {
+                const query = searchQuery.value.trim();
+                const databases = Array.from(document.querySelectorAll('input[name="database"]:checked')).map(db => db.value);
+                
+                if (!query) {
+                    showNotification('请输入检索式', 'error');
+                    return;
+                }
+                
+                if (databases.length === 0) {
+                    showNotification('请至少选择一个文献数据库', 'error');
+                    return;
+                }
+                
+                // 更新状态
+                searchStatus.textContent = '正在检索...';
+                runSearchBtn.disabled = true;
+                runSearchBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                // 模拟检索过程
+                setTimeout(function() {
+                    // 生成随机结果数
+                    const resultCount = Math.floor(Math.random() * 150) + 50;
+                    const rctNumber = Math.floor(resultCount * (Math.random() * 0.3 + 0.1));
+                    const timeSpent = (Math.random() * 3 + 1).toFixed(1);
+                    
+                    // 更新统计信息
+                    totalResults.textContent = resultCount;
+                    selectedDatabases.textContent = databases.length;
+                    rctCount.textContent = rctNumber;
+                    searchTime.textContent = `${timeSpent}秒`;
+                    
+                    // 显示过滤标签
+                    filterTags.classList.remove('hidden');
+                    
+                    // 生成结果列表
+                    let resultsHtml = '';
+                    for (let i = 1; i <= 10; i++) {
+                        const treatmentDrugs = [
+                            "纳武利尤单抗+化疗",
+                            "帕博利珠单抗+化疗",
+                            "阿替利珠单抗+化疗",
+                            "度伐利尤单抗+化疗",
+                            "卡瑞利珠单抗+化疗"
+                        ];
+                        const title = `小细胞肺癌晚期一线${treatmentDrugs[Math.floor(Math.random() * treatmentDrugs.length)]}的疗效与安全性研究 ${i}`;
+                        const authors = ['Zhang S', 'Li M', 'Wang J', 'Liu Y', 'Chen L', 'Zhao X', 'Huang W'].slice(0, Math.floor(Math.random() * 3) + 2).join(', ');
+                        const journal = ["Journal of Clinical Oncology", "Lancet Oncology", "Journal of Thoracic Oncology", "中华肿瘤杂志", "中国肺癌杂志"][Math.floor(Math.random() * 5)];
+                        const year = 2018 + Math.floor(Math.random() * 5);
+                        const database = databases[Math.floor(Math.random() * databases.length)].toUpperCase();
+                        const score = (Math.random() * 30 + 70).toFixed(1);
+                        const isRCT = Math.random() > 0.3;
+                        
+                        resultsHtml += `
+                            <div class="border-b border-gray-100 last:border-0">
+                                <div class="p-4 md:p-5">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <h4 class="font-medium hover:text-primary transition-custom cursor-pointer">${title}</h4>
+                                        <div class="flex items-center ml-2">
+                                            <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">${score}分</span>
+                                            ${isRCT ? '<span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full ml-2">RCT研究</span>' : ''}
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-neutral mb-2">${authors}</div>
+                                    <div class="flex flex-wrap items-center text-sm text-neutral/80 gap-x-4 gap-y-1 mb-3">
+                                        <span>${journal}</span>
+                                        <span>(${year})</span>
+                                        <span>来源: ${database}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex space-x-2">
+                                            <button class="text-xs bg-primary/10 hover:bg-primary/20 text-primary px-3 py-1 rounded-lg transition-custom inline-flex items-center add-to-download">
+                                                <i class="fa fa-download mr-1"></i> 下载
+                                            </button>
+                                            <button class="text-xs bg-gray-100 hover:bg-gray-200 text-neutral px-3 py-1 rounded-lg transition-custom inline-flex items-center">
+                                                <i class="fa fa-star-o mr-1"></i> 收藏
+                                            </button>
+                                        </div>
+                                        <div class="text-xs text-neutral/60">PMID: ${1000000 + Math.floor(Math.random() * 9000000)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    searchResults.innerHTML = resultsHtml;
+                    
+                    // 显示分页
+                    pagination.classList.remove('hidden');
+                    
+                    // 启用按钮
+                    exportResultsBtn.disabled = false;
+                    exportResultsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    addToCollectionBtn.disabled = false;
+                    addToCollectionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // 更新状态
+                    searchStatus.textContent = `检索完成，找到 ${resultCount} 条结果`;
+                    runSearchBtn.disabled = false;
+                    runSearchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // 添加下载事件
+                    document.querySelectorAll('.add-to-download').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const title = this.closest('.p-4').querySelector('h4').textContent;
+                            const yearElem = this.closest('.p-4').querySelector('.flex.flex-wrap span:nth-child(2)');
+                            const year = yearElem ? yearElem.textContent.replace(/[()]/g, '') : '';
+                            const databaseElem = this.closest('.p-4').querySelector('.flex.flex-wrap span:nth-child(3)');
+                            const database = databaseElem ? databaseElem.textContent.replace('来源: ', '') : '';
+                            
+                            addToDownloadQueue(title, year, database);
+                            this.innerHTML = '<i class="fa fa-check mr-1"></i> 已添加';
+                            this.classList.remove('bg-primary/10', 'hover:bg-primary/20', 'text-primary', 'add-to-download');
+                            this.classList.add('bg-green-100', 'text-green-600');
+                        });
+                    });
+                    
+                    showNotification(`检索完成，共找到 ${resultCount} 条结果`, 'success');
+                }, 2000);
+            });
+            
+            // 导出结果
+            exportResultsBtn.addEventListener('click', function() {
+                // 收集结果数据
+                const results = [];
+                searchResults.querySelectorAll('.border-b').forEach(item => {
+                    const title = item.querySelector('h4').textContent;
+                    const authors = item.querySelector('.text-neutral').textContent;
+                    const journalInfo = item.querySelector('.flex.flex-wrap').textContent;
+                    const year = journalInfo.match(/\((\d{4})\)/) ? journalInfo.match(/\((\d{4})\)/)[1] : '';
+                    const database = item.querySelector('.flex.flex-wrap span:nth-child(3)').textContent.replace('来源: ', '');
+                    
+                    results.push({
+                        title, authors, year, database
+                    });
+                });
+                
+                // 生成RIS格式
+                let risContent = "TY - JOUR\\n";
+                results.forEach((item, index) => {
+                    risContent += `TI - ${item.title}\\n`;
+                    risContent += `AU - ${item.authors}\\n`;
+                    risContent += `PY - ${item.year}\\n`;
+                    risContent += `JO - ${item.database}\\n`;
+                    risContent += "ER - \\n\\n";
+                });
+                
+                // 创建下载
+                const blob = new Blob([risContent], { type: 'application/x-research-info-systems' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '检索结果_' + new Date().toISOString().slice(0,10) + '.ris';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showNotification('结果导出成功，已保存为RIS格式', 'success');
+            });
+            
+            // 加入收藏
+            addToCollectionBtn.addEventListener('click', function() {
+                showNotification('已将当前页结果加入收藏', 'info');
+            });
+            
+            // 3. 全文下载模块 - 优化默认路径和药物文献管理
+            const addDownloadsBtn = document.getElementById('add_downloads');
+            const startAllDownloadsBtn = document.getElementById('start_all_downloads');
+            const cancelAllDownloadsBtn = document.getElementById('cancel_all_downloads');
+            const downloadQueue = document.getElementById('download_queue');
+            const totalTasks = document.getElementById('total_tasks');
+            const completedTasks = document.getElementById('completed_tasks');
+            const downloadingTasks = document.getElementById('downloading_tasks');
+            const failedTasks = document.getElementById('failed_tasks');
+            const overallProgressBar = document.getElementById('overall_progress_bar');
+            const overallProgressText = document.getElementById('overall_progress_text');
+            
+            // 添加文献到下载队列
+            addDownloadsBtn.addEventListener('click', function() {
+                // 模拟添加3个小细胞肺癌免疫治疗相关文献
+                const titles = [
+                    "小细胞肺癌晚期一线纳武利尤单抗联合化疗的多中心随机对照试验",
+                    "阿替利珠单抗对比安慰剂联合化疗治疗广泛期小细胞肺癌的III期研究",
+                    "度伐利尤单抗在小细胞肺癌维持治疗中的疗效与安全性分析",
+                    "PD-L1抑制剂治疗小细胞肺癌的Meta分析与剂量反应关系",
+                    "中国人群中小细胞肺癌免疫治疗的疗效预测因素研究"
+                ];
+                
+                for (let i = 0; i < 3; i++) {
+                    const title = titles[Math.floor(Math.random() * titles.length)];
+                    const year = 2018 + Math.floor(Math.random() * 5);
+                    const databases = ["PubMed", "Web of Science", "CNKI", "ASCO", "ESMO"];
+                    const database = databases[Math.floor(Math.random() * databases.length)];
+                    
+                    addToDownloadQueue(title, year, database);
+                }
+            });
+            
+            // 添加到下载队列函数
+            function addToDownloadQueue(title, year, database) {
+                // 如果是初始状态，清空提示
+                if (downloadQueue.querySelector('.text-center')) {
+                    downloadQueue.innerHTML = '';
+                }
+                
+                const id = 'dl_' + Date.now();
+                
+                const itemHtml = `
+                    <div class="border-b border-gray-100 last:border-0" id="${id}">
+                        <div class="p-3 md:grid md:grid-cols-12 md:items-center">
+                            <div class="md:col-span-5 mb-2 md:mb-0">
+                                <div class="text-sm font-medium truncate">${title}</div>
+                            </div>
+                            <div class="md:col-span-2 mb-2 md:mb-0 text-sm text-neutral">${database}</div>
+                            <div class="md:col-span-2 mb-2 md:mb-0 text-sm text-neutral">${year}</div>
+                            <div class="md:col-span-2 mb-2 md:mb-0">
+                                <span class="text-xs bg-gray-100 text-neutral px-2 py-1 rounded-full download-status">等待中</span>
+                            </div>
+                            <div class="md:col-span-1 flex justify-center">
+                                <button class="text-neutral hover:text-red-500 transition-custom remove-download" data-id="${id}">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hidden px-3 pb-3">
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="download-progress bg-primary h-1.5 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                downloadQueue.insertAdjacentHTML('beforeend', itemHtml);
+                
+                // 更新任务数量
+                updateDownloadStats();
+                
+                // 添加删除事件
+                document.querySelector(`.remove-download[data-id="${id}"]`).addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    document.getElementById(id).remove();
+                    
+                    // 如果队列为空，显示提示
+                    if (downloadQueue.children.length === 0) {
+                        downloadQueue.innerHTML = `
+                            <div class="p-8 text-center text-neutral">
+                                <i class="fa fa-file-pdf-o text-4xl mb-4 opacity-30"></i>
+                                <p>下载队列为空，点击"添加文献"按钮添加需要下载的文献</p>
+                            </div>
+                        `;
+                    }
+                    
+                    updateDownloadStats();
+                    showNotification('已从下载队列中移除', 'info');
+                });
+                
+                // 启用开始下载按钮
+                startAllDownloadsBtn.disabled = false;
+            }
+            
+            // 更新下载统计
+            function updateDownloadStats() {
+                const total = downloadQueue.children.length;
+                totalTasks.textContent = total;
+                
+                // 如果没有任务，重置其他统计
+                if (total === 0) {
+                    completedTasks.textContent = '0';
+                    downloadingTasks.textContent = '0';
+                    failedTasks.textContent = '0';
+                    overallProgressBar.style.width = '0%';
+                    overallProgressText.textContent = '0%';
+                    startAllDownloadsBtn.disabled = true;
+                    cancelAllDownloadsBtn.disabled = true;
+                    cancelAllDownloadsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+            
+            // 开始所有下载
+            startAllDownloadsBtn.addEventListener('click', function() {
+                const items = downloadQueue.querySelectorAll('[id^="dl_"]');
+                if (items.length === 0) return;
+                
+                // 禁用按钮
+                startAllDownloadsBtn.disabled = true;
+                addDownloadsBtn.disabled = true;
+                addDownloadsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                // 启用取消按钮
+                cancelAllDownloadsBtn.disabled = false;
+                cancelAllDownloadsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                
+                // 重置统计
+                completedTasks.textContent = '0';
+                downloadingTasks.textContent = '0';
+                failedTasks.textContent = '0';
+                
+                // 为每个项目开始下载
+                items.forEach((item, index) => {
+                    // 延迟开始，避免同时请求
+                    setTimeout(() => {
+                        startDownload(item);
+                    }, index * 1000);
+                });
+            });
+            
+            // 开始单个下载
+            function startDownload(item) {
+                const statusElem = item.querySelector('.download-status');
+                const progressContainer = item.querySelector('.hidden');
+                const progressBar = item.querySelector('.download-progress');
+                const removeBtn = item.querySelector('.remove-download');
+                
+                // 更新状态
+                statusElem.textContent = '下载中';
+                statusElem.className = 'text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full download-status';
+                progressContainer.classList.remove('hidden');
+                removeBtn.disabled = true;
+                removeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                // 更新正在下载数量
+                downloadingTasks.textContent = parseInt(downloadingTasks.textContent) + 1;
+                
+                // 模拟下载进度
+                let progress = 0;
+                const interval = setInterval(() => {
+                    // 随机增加进度
+                    progress += Math.random() * 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        
+                        // 随机成功或失败（90%成功率）
+                        const success = Math.random() > 0.1;
+                        
+                        if (success) {
+                            statusElem.textContent = '已完成';
+                            statusElem.className = 'text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full download-status';
+                            completedTasks.textContent = parseInt(completedTasks.textContent) + 1;
+                        } else {
+                            statusElem.textContent = '下载失败';
+                            statusElem.className = 'text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full download-status';
+                            failedTasks.textContent = parseInt(failedTasks.textContent) + 1;
+                            
+                            // 允许重新下载
+                            const retryBtn = document.createElement('button');
+                            retryBtn.className = 'text-xs bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded-full transition-custom ml-2 retry-download';
+                            retryBtn.innerHTML = '<i class="fa fa-refresh mr-1"></i> 重试';
+                            retryBtn.addEventListener('click', function() {
+                                startDownload(item);
+                                this.remove();
+                            });
+                            statusElem.parentNode.appendChild(retryBtn);
+                        }
+                        
+                        // 恢复删除按钮
+                        removeBtn.disabled = false;
+                        removeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                    
+                    // 更新进度条
+                    progressBar.style.width = `${progress}%`;
+                    
+                    // 更新总体进度
+                    updateOverallProgress();
+                    
+                    // 减少正在下载数量（当完成时）
+                    if (progress >= 100) {
+                        downloadingTasks.textContent = parseInt(downloadingTasks.textContent) - 1;
+                        
+                        // 如果所有下载都完成
+                        if (parseInt(downloadingTasks.textContent) === 0) {
+                            startAllDownloadsBtn.disabled = false;
+                            addDownloadsBtn.disabled = false;
+                            addDownloadsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            cancelAllDownloadsBtn.disabled = true;
+                            cancelAllDownloadsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                            
+                            showNotification('所有下载任务已完成', 'success');
+                        }
+                    }
+                }, 500);
+                
+                // 存储interval，用于取消
+                item.setAttribute('data-interval', interval);
+            }
+            
+            // 更新总体进度
+            function updateOverallProgress() {
+                const total = parseInt(totalTasks.textContent);
+                if (total === 0) return;
+                
+                const completed = parseInt(completedTasks.textContent);
+                const failed = parseInt(failedTasks.textContent);
+                const progress = Math.round(((completed + failed) / total) * 100);
+                
+                overallProgressBar.style.width = `${progress}%`;
+                overallProgressText.textContent = `${progress}%`;
+            }
+            
+            // 取消所有下载
+            cancelAllDownloadsBtn.addEventListener('click', function() {
+                const items = downloadQueue.querySelectorAll('[id^="dl_"]');
+                
+                items.forEach(item => {
+                    const interval = item.getAttribute('data-interval');
+                    if (interval) {
+                        clearInterval(interval);
+                        
+                        const statusElem = item.querySelector('.download-status');
+                        const progressContainer = item.querySelector(':not(.hidden)');
+                        const removeBtn = item.querySelector('.remove-download');
+                        
+                        // 更新状态
+                        statusElem.textContent = '已取消';
+                        statusElem.className = 'text-xs bg-gray-100 text-neutral px-2 py-1 rounded-full download-status';
+                        
+                        // 隐藏进度条
+                        if (progressContainer) {
+                            progressContainer.classList.add('hidden');
+                        }
+                        
+                        // 恢复删除按钮
+                        removeBtn.disabled = false;
+                        removeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        
+                        // 更新统计
+                        downloadingTasks.textContent = parseInt(downloadingTasks.textContent) - 1;
+                    }
+                });
+                
+                // 恢复按钮状态
+                startAllDownloadsBtn.disabled = false;
+                addDownloadsBtn.disabled = false;
+                addDownloadsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                cancelAllDownloadsBtn.disabled = true;
+                cancelAllDownloadsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                
+                showNotification('所有下载任务已取消', 'info');
+            });
+            
+            // 4. 结果整理功能
+            const uploadFilesArea = document.getElementById('upload_files_area');
+            const fileUpload = document.getElementById('file_upload');
+            const importStatus = document.getElementById('import_status');
+            const processDocumentsBtn = document.getElementById('process_documents');
+            const exportProcessedBtn = document.getElementById('export_processed');
+            const viewDetailsBtn = document.getElementById('view_details');
+            const originalCount = document.getElementById('original_count');
+            const uniqueCount = document.getElementById('unique_count');
+            const duplicateCount = document.getElementById('duplicate_count');
+            const processingTime = document.getElementById('processing_time');
+            const processingResults = document.getElementById('processing_results');
+            
+            // 上传文件区域点击事件
+            uploadFilesArea.addEventListener('click', function() {
+                fileUpload.click();
+            });
+            
+            // 文件选择事件
+            fileUpload.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const filenames = Array.from(this.files).map(file => file.name).join(', ');
+                    importStatus.textContent = `已选择 ${this.files.length} 个文件: ${filenames}`;
+                    
+                    // 启用处理按钮
+                    processDocumentsBtn.disabled = false;
+                    processDocumentsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // 模拟导入
+                    setTimeout(function() {
+                        const count = Math.floor(Math.random() * 200) + 50;
+                        originalCount.textContent = count;
+                        showNotification(`成功导入 ${count} 篇文献`, 'success');
+                    }, 1000);
+                }
+            });
+            
+            // 处理文献
+            processDocumentsBtn.addEventListener('click', function() {
+                const count = parseInt(originalCount.textContent);
+                if (count === 0) return;
+                
+                // 禁用按钮
+                processDocumentsBtn.disabled = true;
+                processDocumentsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                
+                // 显示处理中
+                processingResults.innerHTML = `
+                    <div class="p-8 text-center text-neutral">
+                        <i class="fa fa-circle-o-notch fa-spin text-4xl mb-4 opacity-70"></i>
+                        <p>正在处理文献，请稍候...</p>
+                    </div>
+                `;
+                
+                // 模拟处理过程
+                setTimeout(function() {
+                    const duplicates = Math.floor(count * (Math.random() * 0.2 + 0.05));
+                    const unique = count - duplicates;
+                    const timeSpent = (Math.random() * 5 + 2).toFixed(1);
+                    
+                    // 更新统计
+                    uniqueCount.textContent = unique;
+                    duplicateCount.textContent = duplicates;
+                    processingTime.textContent = `${timeSpent}秒`;
+                    
+                    // 生成处理结果
+                    const resultsHtml = `
+                        <div class="p-5">
+                            <div class="mb-6">
+                                <h4 class="font-medium mb-3">去重统计</h4>
+                                <div class="h-64">
+                                    <canvas id="duplicate_chart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-medium mb-3">文献年份分布</h4>
+                                <div class="h-64">
+                                    <canvas id="year_chart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <h4 class="font-medium mb-3">免疫治疗药物分布</h4>
+                                <div class="h-64">
+                                    <canvas id="drug_chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    processingResults.innerHTML = resultsHtml;
+                    
+                    // 启用按钮
+                    exportProcessedBtn.disabled = false;
+                    exportProcessedBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    viewDetailsBtn.disabled = false;
+                    viewDetailsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    // 绘制图表
+                    drawDuplicateChart(unique, duplicates);
+                    drawYearChart();
+                    drawDrugChart();
+                    
+                    showNotification('文献处理完成', 'success');
+                }, 3000);
+            });
+            
+            // 绘制去重统计图表
+            function drawDuplicateChart(unique, duplicates) {
+                const ctx = document.getElementById('duplicate_chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['去重后文献', '重复文献'],
+                        datasets: [{
+                            data: [unique, duplicates],
+                            backgroundColor: ['#165DFF', '#F87171'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 绘制年份分布图表
+            function drawYearChart() {
+                const ctx = document.getElementById('year_chart').getContext('2d');
+                
+                // 生成近10年的随机数据
+                const years = [];
+                const counts = [];
+                const now = new Date().getFullYear();
+                
+                for (let i = 9; i >= 0; i--) {
+                    years.push(now - i);
+                    counts.push(Math.floor(Math.random() * 50) + 10);
+                }
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: years,
+                        datasets: [{
+                            label: '文献数量',
+                            data: counts,
+                            backgroundColor: '#165DFF',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    drawBorder: false
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 新增：绘制药物分布图表
+            function drawDrugChart() {
+                const ctx = document.getElementById('drug_chart').getContext('2d');
+                
+                // 免疫治疗药物数据
+                const drugs = [
+                    '纳武利尤单抗',
+                    '帕博利珠单抗',
+                    '阿替利珠单抗',
+                    '度伐利尤单抗',
+                    '其他PD-1/PD-L1抑制剂'
+                ];
+                
+                const counts = drugs.map(() => Math.floor(Math.random() * 30) + 10);
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: drugs,
+                        datasets: [{
+                            label: '相关文献数量',
+                            data: counts,
+                            backgroundColor: '#36BFFA',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                grid: {
+                                    drawBorder: false
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 导出处理结果
+            exportProcessedBtn.addEventListener('click', function() {
+                showNotification('处理结果已导出为Excel格式', 'success');
+            });
+            
+            // 查看详情
+            viewDetailsBtn.addEventListener('click', function() {
+                showNotification('详情视图已打开', 'info');
+            });
+            
+            // 5. 文献提取模块 - 增加肿瘤学和免疫治疗专用模板
+            const sourceDocuments = document.getElementById('source_documents');
+            const newFieldName = document.getElementById('new_field_name');
+            const newFieldType = document.getElementById('new_field_type');
+            const addFieldBtn = document.getElementById('add_field');
+            const fieldsList = document.getElementById('fields_list');
+            const loadTemplateBtn = document.getElementById('load_template');
+            const loadOncologyTemplateBtn = document.getElementById('load_oncology_template');
+            const loadImmunotherapyTemplateBtn = document.getElementById('load_immunotherapy_template');
+            const generateExtractionBtn = document.getElementById('generate_extraction');
+            const exportExtractionBtn = document.getElementById('export_extraction');
+            const printExtractionBtn = document.getElementById('print_extraction');
+            const extractionPreview = document.getElementById('extraction_preview');
+            
+            // 选择文献来源
+            sourceDocuments.addEventListener('change', function() {
+                if (this.value) {
+                    // 清空现有字段
+                    fieldsList.innerHTML = '';
+                    
+                    // 添加默认字段
+                    const defaultFields = [
+                        {name: '文献编码', type: 'text', required: true},
+                        {name: '标题', type: 'text', required: true},
+                        {name: '作者', type: 'text', required: true},
+                        {name: '期刊', type: 'text', required: true},
+                        {name: '发表年份', type: 'number', required: true}
+                    ];
+                    
+                    defaultFields.forEach(field => {
+                        addFieldToList(field.name, field.type, field.required);
+                    });
+                    
+                    // 启用添加字段按钮
+                    addFieldBtn.disabled = false;
+                    addFieldBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    
+                    showNotification('已选择文献来源', 'info');
+                } else {
+                    // 重置
+                    fieldsList.innerHTML = `
+                        <div class="p-4 text-center text-neutral text-sm">
+                            选择文献来源后添加提取字段
+                        </div>
+                    `;
+                    addFieldBtn.disabled = true;
+                    addFieldBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    generateExtractionBtn.disabled = true;
+                    generateExtractionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            });
+            
+            // 加载肿瘤学模板
+            loadOncologyTemplateBtn.addEventListener('click', function() {
+                if (!sourceDocuments.value) {
+                    showNotification('请先选择文献来源', 'error');
+                    return;
+                }
+                
+                // 清空现有字段
+                fieldsList.innerHTML = '';
+                
+                // 肿瘤学研究提取模板
+                const oncologyFields = [
+                    {name: '文献编码', type: 'text', required: true},
+                    {name: '标题', type: 'text', required: true},
+                    {name: '第一作者', type: 'text', required: true},
+                    {name: '发表年份', type: 'number', required: true},
+                    {name: '期刊', type: 'text', required: true},
+                    {name: '影响因子', type: 'number', required: false},
+                    {name: '研究类型', type: 'dropdown', required: true},
+                    {name: '样本量', type: 'number', required: true},
+                    {name: '研究人群特征', type: 'text', required: false},
+                    {name: '干预措施', type: 'text', required: true},
+                    {name: '对照措施', type: 'text', required: false},
+                    {name: '随访时间', type: 'text', required: false},
+                    {name: '主要结局指标', type: 'text', required: true},
+                    {name: '主要结果', type: 'text', required: true},
+                    {name: '不良反应发生率', type: 'text', required: false}
+                ];
+                
+                oncologyFields.forEach(field => {
+                    addFieldToList(field.name, field.type, field.required);
+                });
+                
+                showNotification('已加载肿瘤学研究提取表模板', 'success');
+            });
+            
+            // 加载免疫治疗模板
+            loadImmunotherapyTemplateBtn.addEventListener('click', function() {
+                if (!sourceDocuments.value) {
+                    showNotification('请先选择文献来源', 'error');
+                    return;
+                }
+                
+                // 清空现有字段
+                fieldsList.innerHTML = '';
+                
+                // 免疫治疗研究提取模板
+                const immunotherapyFields = [
+                    {name: '文献编码', type: 'text', required: true},
+                    {name: '标题', type: 'text', required: true},
+                    {name: '作者', type: 'text', required: true},
+                    {name: '发表年份', type: 'number', required: true},
+                    {name: '期刊', type: 'text', required: true},
+                    {name: '研究类型', type: 'dropdown', required: true},
+                    {name: '样本量', type: 'number', required: true},
+                    {name: '癌症类型', type: 'text', required: true},
+                    {name: '癌症分期', type: 'text', required: true},
+                    {name: '免疫治疗药物', type: 'text', required: true},
+                    {name: '剂量与给药方案', type: 'text', required: true},
+                    {name: '联合治疗方案', type: 'text', required: false},
+                    {name: '客观缓解率(ORR)', type: 'text', required: true},
+                    {name: '无进展生存期(PFS)', type: 'text', required: true},
+                    {name: '总生存期(OS)', type: 'text', required: true},
+                    {name: 'PD-L1表达状态', type: 'text', required: false},
+                    {name: '免疫相关不良反应', type: 'text', required: true},
+                    {name: '结论与意义', type: 'text', required: false}
+                ];
+                
+                immunotherapyFields.forEach(field => {
+                    addFieldToList(field.name, field.type, field.required);
+                });
+                
+                showNotification('已加载免疫治疗研究提取表模板', 'success');
+            });
+            
+            // 添加字段到列表
+            function addFieldToList(name, type, required = false) {
+                const typeText = {
+                    'text': '文本',
+                    'number': '数字',
+                    'date': '日期',
+                    'checkbox': '复选框',
+                    'dropdown': '下拉选择'
+                }[type];
+                
+                const fieldHtml = `
+                    <div class="flex items-center justify-between p-3 border-b border-gray-100 last:border-0 field-item">
+                        <div class="flex items-center">
+                            <input type="checkbox" class="mr-2 field-required" ${required ? 'checked' : ''} ${required ? 'disabled' : ''}>
+                            <div>
+                                <div class="text-sm font-medium">${name}</div>
+                                <div class="text-xs text-neutral">${typeText}</div>
+                            </div>
+                        </div>
+                        <button class="text-neutral hover:text-red-500 transition-custom remove-field" ${required ? 'disabled' : ''} ${required ? 'style="opacity: 0.5; cursor: not-allowed"' : ''}>
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                fieldsList.insertAdjacentHTML('beforeend', fieldHtml);
+                
+                // 添加删除事件
+                if (!required) {
+                    const removeBtn = fieldsList.lastElementChild.querySelector('.remove-field');
+                    removeBtn.addEventListener('click', function() {
+                        this.closest('.field-item').remove();
+                    });
+                }
+                
+                // 启用生成按钮
+                generateExtractionBtn.disabled = false;
+                generateExtractionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            
+            // 添加新字段
+            addFieldBtn.addEventListener('click', function() {
+                const name = newFieldName.value.trim();
+                const type = newFieldType.value;
+                
+                if (!name) {
+                    showNotification('请输入字段名称', 'error');
+                    return;
+                }
+                
+                addFieldToList(name, type);
+                
+                // 清空输入
+                newFieldName.value = '';
+                
+                showNotification(`已添加字段: ${name}`, 'success');
+            });
+            
+            // 加载通用模板
+            loadTemplateBtn.addEventListener('click', function() {
+                if (!sourceDocuments.value) {
+                    showNotification('请先选择文献来源', 'error');
+                    return;
+                }
+                
+                // 清空现有字段
+                fieldsList.innerHTML = '';
+                
+                // 加载系统评价模板
+                const templateFields = [
+                    {name: '文献编码', type: 'text', required: true},
+                    {name: '标题', type: 'text', required: true},
+                    {name: '作者', type: 'text', required: true},
+                    {name: '期刊', type: 'text', required: true},
+                    {name: '发表年份', type: 'number', required: true},
+                    {name: '研究设计', type: 'dropdown', required: false},
+                    {name: '样本量', type: 'number', required: false},
+                    {name: '干预措施', type: 'text', required: false},
+                    {name: '主要结局', type: 'text', required: false},
+                    {name: '主要发现', type: 'text', required: false},
+                    {name: '方法学质量', type: 'number', required: false},
+                    {name: '纳入/排除', type: 'checkbox', required: false}
+                ];
+                
+                templateFields.forEach(field => {
+                    addFieldToList(field.name, field.type, field.required);
+                });
+                
+                showNotification('已加载系统评价提取表模板', 'success');
+            });
+            
+            // 生成提取表
+            generateExtractionBtn.addEventListener('click', function() {
+                // 获取所有字段
+                const fieldItems = fieldsList.querySelectorAll('.field-item');
+                if (fieldItems.length === 0) return;
+                
+                // 显示生成中
+                extractionPreview.innerHTML = `
+                    <div class="p-8 text-center text-neutral">
+                        <i class="fa fa-circle-o-notch fa-spin text-4xl mb-4 opacity-70"></i>
+                        <p>正在生成提取表，请稍候...</p>
+                    </div>
+                `;
+                
+                // 模拟生成过程
+                setTimeout(function() {
+                    // 获取字段名称
+                    const fields = Array.from(fieldItems).map(item => {
+                        return item.querySelector('.font-medium').textContent;
+                    });
+                    
+                    // 生成表格预览
+                    let tableHtml = `
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-neutral uppercase tracking-wider">序号</th>
+                    `;
+                    
+                    // 添加表头
+                    fields.forEach(field => {
+                        tableHtml += `
+                            <th class="px-4 py-3 text-left text-xs font-medium text-neutral uppercase tracking-wider">${field}</th>
+                        `;
+                    });
+                    
+                    tableHtml += `
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                    `;
+                    
+                    // 添加5行示例数据
+                    const drugs = ["纳武利尤单抗", "帕博利珠单抗", "阿替利珠单抗", "度伐利尤单抗", "卡瑞利珠单抗"];
+                    const orrValues = ["38.2%", "42.5%", "35.7%", "40.1%", "37.8%"];
+                    
+                    for (let i = 1; i <= 5; i++) {
+                        tableHtml += `<tr class="${i % 2 === 0 ? 'bg-light' : ''}">`;
+                        tableHtml += `<td class="px"></tr></tbody></table></div>`;
+
+                        // 添加提取表导出功能
+                        extractionPreview.innerHTML = tableHtml;
+                        
+                        const exportTableBtn = document.createElement('button');
+                        exportTableBtn.className = 'mt-4 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm transition-custom';
+                        exportTableBtn.innerHTML = '<i class="fa fa-download mr-1"></i> 导出提取表';
+                        exportTableBtn.addEventListener('click', function() {
+                            const headers = Array.from(extractionPreview.querySelectorAll('th')).map(th => th.textContent.trim());
+                            const rows = Array.from(extractionPreview.querySelectorAll('tbody tr')).map(row => {
+                                return Array.from(row.querySelectorAll('td')).map(td => {
+                                    const text = td.textContent.trim();
+                                    return text.includes(',') || text.includes('"') ? `"${text.replace(/"/g, '""')}"` : text;
+                                });
+                            });
+                            
+                            let csvContent = headers.join(',') + '\n';
+                            rows.forEach(row => csvContent += row.join(',') + '\n');
+                            
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = '文献提取表_' + new Date().toISOString().slice(0,10) + '.csv';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                            
+                            showNotification('提取表已导出为CSV格式', 'success');
+                        });
+                        
+                        extractionPreview.parentNode.insertBefore(exportTableBtn, extractionPreview.nextSibling);
+                        
+                        tableHtml += `<td class="px-4 py-3 whitespace-nowrap text-sm">${i}</td>`;
+                        
+                        fields.forEach((field, index) => {
+                            if (index === 0) { // 文献编码
+                                tableHtml += `<td class="px-4 py-3 whitespace-nowrap text-sm">Lit-${i.toString().padStart(3, '0')}</td>`;
+                            } else if (index === 1) { // 标题
+                                tableHtml += `<td class="px-4 py-3 text-sm">小细胞肺癌晚期${drugs[i-1]}一线治疗的临床研究 ${i}</td>`;
+                            } else if (index === 2) { // 作者
+                                tableHtml += `<td class="px-4 py-3 whitespace-nowrap text-sm">${['Zhang', 'Li', 'Wang', 'Chen', 'Zhao'][i-1]} et al.</td>`;
+                            } else if (index === 3) { // 年份
+                                tableHtml += `<td class="px-4 py-3 whitespace-nowrap text-sm">${2018 + (i % 5)}</td>`;
+                            } else if (index === 4) { // 期刊
+                                tableHtml += `<td class="px

@@ -993,7 +993,7 @@ PD-L1抑制剂"></textarea>
             });
             
             // 1. 检索策略生成功能 - 增强药物检索支持
-            const generateStrategyBtn = document.getElementById('generate_strategy');
+            // 已在下方重新定义，避免变量重复声明
             const strategyResult = document.getElementById('strategy_result');
             const copyStrategyBtn = document.getElementById('copy_strategy');
             const useStrategyBtn = document.getElementById('use_strategy');
@@ -1055,7 +1055,10 @@ generateStrategyBtn.addEventListener('click', function() {
                     return;
                 }
                 
-                // 生成检索策略（优化版本，增加药物检索逻辑）
+                // 生成检索策略（优化版本，增加药物检索逻辑和必须包含条件处理）
+                let mustIncludeImmunotherapy = topic.includes('必须包含免疫治疗药物') || topic.includes('必须包含免疫药物');
+                
+                // 生成检索策略
                 let strategyHtml = `
                     <div class="font-medium mb-2">研究主题：${topic}</div>
                     <div class="mb-3">
@@ -1063,6 +1066,7 @@ generateStrategyBtn.addEventListener('click', function() {
                         <div class="bg-white p-3 rounded-lg text-sm font-mono">
                             (${keywords.join(' OR ')})${synonyms.length > 0 ? ` OR (${synonyms.join(' OR ')})` : ''}
                             ${specificDrugs.length > 0 ? ` AND (${specificDrugs.join(' OR ')})` : ''}
+                            ${mustIncludeImmunotherapy ? ` AND (免疫治疗 OR 免疫药物 OR PD-1 OR PD-L1 OR CTLA-4)` : ''}
                             ${startYear ? ` AND (PY >= ${startYear})` : ''}
                             ${endYear ? ` AND (PY <= ${endYear})` : ''}
                             ${docType ? ` AND (PT = ${docType})` : ''}
@@ -1089,7 +1093,9 @@ generateStrategyBtn.addEventListener('click', function() {
                 
                 // 添加导出按钮
                 const exportBtn = document.createElement('button');
-                exportBtn.className = 'ml-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm transition-custom';
+                exportBtn.className = 'ml-2 bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded-lg text-sm transition-custom shadow-md hover:shadow-lg';
+exportBtn.title = '导出检索策略为文本文件';
+exportBtn.setAttribute('aria-label', '导出检索策略');
                 exportBtn.innerHTML = '<i class="fa fa-download mr-1"></i> 导出';
                 exportBtn.addEventListener('click', function() {
                     const strategyText = strategyResult.querySelector('.font-mono').textContent;
@@ -1293,13 +1299,26 @@ generateStrategyBtn.addEventListener('click', function() {
                     });
                 });
                 
-                // 生成RIS格式
+                // 生成RIS格式（增强版）
                 let risContent = "TY - JOUR\\n";
                 results.forEach((item, index) => {
+                    // 提取期刊信息
+                    const journalParts = item.journalInfo.match(/([^,]+),?\s*(\d+)?\(?([^)]+)?\)?:?\s*(\d+)?/);
+                    const journalName = journalParts ? journalParts[1] : item.journalInfo;
+                    const volume = journalParts && journalParts[2] ? journalParts[2] : "";
+                    const issue = journalParts && journalParts[3] ? journalParts[3] : "";
+                    const pages = journalParts && journalParts[4] ? journalParts[4] : "";
+
                     risContent += `TI - ${item.title}\\n`;
                     risContent += `AU - ${item.authors}\\n`;
                     risContent += `PY - ${item.year}\\n`;
-                    risContent += `JO - ${item.database}\\n`;
+                    risContent += `JO - ${journalName}\\n`;
+                    risContent += volume ? `VL - ${volume}\\n` : "";
+                    risContent += issue ? `IS - ${issue}\\n` : "";
+                    risContent += pages ? `SP - ${pages}\\n` : "";
+                    risContent += `DB - ${item.database}\\n`;
+                    risContent += `UR - https://example.com/article${index}\\n`;
+                    risContent += `AB - [摘要] 本研究探讨了${item.title.toLowerCase()}的疗效与安全性...\\n`;
                     risContent += "ER - \\n\\n";
                 });
                 
@@ -2111,7 +2130,7 @@ generateStrategyBtn.addEventListener('click', function() {
                     
                     for (let i = 1; i <= 5; i++) {
                         tableHtml += `<tr class="${i % 2 === 0 ? 'bg-light' : ''}">`;
-                        tableHtml += `<td class="px"></tr></tbody></table></div>`;
+                        tableHtml += `<td class="px-4 py-3 whitespace-nowrap text-sm">${i}</td>`;
 
                         // 添加提取表导出功能
                         extractionPreview.innerHTML = tableHtml;
